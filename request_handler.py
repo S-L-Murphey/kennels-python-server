@@ -1,9 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from animals import get_all_animals, get_single_animal, create_animal
-from employees import get_all_employees, get_single_employee
-from locations import get_all_locations, get_single_location
-from customers import get_all_customers, get_single_customer
+from employees import get_all_employees, get_single_employee, create_employee
+from locations import get_all_locations, get_single_location, create_location
+from customers import get_all_customers, get_single_customer, create_customer
 
 
 
@@ -18,6 +18,8 @@ class HandleRequests(BaseHTTPRequestHandler):
     """
 
     def parse_url(self, path):
+        """DocString
+        """
         # Just like splitting a string in JavaScript. If the
         # path is "/animals/1", the resulting list will
         # have "" at index 0, "animals" at index 1, and "1"
@@ -78,25 +80,21 @@ class HandleRequests(BaseHTTPRequestHandler):
 
             else:
                 response = f"{get_all_animals()}"
-        
         if resource == "employees":
             if id is not None:
                 response = f"{get_single_employee(id)}"
 
             else:
-                response = f"{get_all_employees()}"
-        
+                response = f"{get_all_employees()}"                     
         if resource == "locations":
             if id is not None:
                 response = f"{get_single_location(id)}"
 
             else:
                 response = f"{get_all_locations()}"
-
         if resource == "customers":
             if id is not None:
                 response = f"{get_single_customer(id)}"
-
             else:
                 response = f"{get_all_customers()}"
 
@@ -106,6 +104,8 @@ class HandleRequests(BaseHTTPRequestHandler):
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
     def do_POST(self):
+        """Handles POST requests to the server
+        """
         self._set_headers(201)
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
@@ -118,15 +118,31 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Initialize new animal
         new_animal = None
+        new_location = None
+        new_employee = None
+        new_customer = None
 
         # Add a new animal to the list. Don't worry about
         # the orange squiggle, you'll define the create_animal
         # function next.
         if resource == "animals":
             new_animal = create_animal(post_body)
+            self.wfile.write(f"{new_animal}".encode())
+
+        elif resource == "locations":
+            new_location = create_location(post_body)
+            self.wfile.write(f"{new_location}".encode())
+
+        elif resource == "employees":
+            new_employee = create_employee(post_body)
+            self.wfile.write(f"{new_employee}".encode())
+
+        
+        elif resource == "customers":
+            new_customer = create_customer(post_body)
+            self.wfile.write(f"{new_customer}".encode())
 
         # Encode the new animal and send in response
-        self.wfile.write(f"{new_animal}".encode())
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
