@@ -208,22 +208,25 @@ class HandleRequests(BaseHTTPRequestHandler):
             success = update_animal(id, post_body)
 
         # Encode the new animal and send in response
-        self.wfile.write("".encode())
 
         if resource == "locations":
             success = update_location(id, post_body)
 
         # Encode the new location and send in response
-        self.wfile.write("".encode())
 
         if resource == "employees":
             success = update_employee(id, post_body)
 
         # Encode the new employee and send in response
-        self.wfile.write("".encode())
 
         if resource == "customers":
             success = update_customer(id, post_body)
+
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
+
 
         # Encode the new employee and send in response
         self.wfile.write("".encode())
