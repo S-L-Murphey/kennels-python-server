@@ -207,9 +207,9 @@ def get_animals_by_status(status):
             a.customer_id,
             a.location_id
         from Animal a
-        WHERE a.location_id = ?
+        WHERE a.status = ?
         """, ( status, ))
-#status can equal "Admitted" or "Ready for Discharge"
+
         animals = []
         dataset = db_cursor.fetchall()
 

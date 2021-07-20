@@ -136,12 +136,9 @@ class HandleRequests(BaseHTTPRequestHandler):
             if key == "location_id" and resource == "employees":
                 response = get_employees_by_location(value)
                 
-            
-            if key == "status" and resource == "animals":
-                if value == "Treatment":
-                    response = get_animals_by_status("Admitted")
-                else: 
-                    response = get_animals_by_status("Ready for Discharge")
+            if key == "status" and resource == "animals":        
+                response = get_animals_by_status(value)
+                
         
         self.wfile.write(f"{response}".encode())
 
