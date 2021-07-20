@@ -112,21 +112,23 @@ def get_single_employee(id):
 
         return json.dumps(employee.__dict__)
 
-def create_employee(employee):
-    # Get the id value of the last location in the list
-    max_id = EMPLOYEES[-1]["id"]
+def create_employee(new_employee):
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
 
-    # Add 1 to whatever that number is
-    new_id = max_id + 1
+        db_cursor.execute("""
+        INSERT INTO Employee
+            ( name, address, location_id )
+        VALUES
+            ( ?, ?, ? );
+        """, (new_employee['name'], new_employee['address'],
+              new_employee['location_id'], ))
 
-    # Add an `id` property to the location dictionary
-    employee["id"] = new_id
+        id = db_cursor.lastrowid
 
-    # Add the location dictionary to the list
-    EMPLOYEES.append(employee)
-    print(EMPLOYEES)
-    # Return the dictionary with `id` property added
-    return employee
+        new_employee['id'] = id
+
+    return json.dumps(new_employee)
 
 def delete_employee(id):
     with sqlite3.connect("./kennel.db") as conn:

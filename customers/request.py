@@ -98,21 +98,23 @@ def get_single_customer(id):
 
         return json.dumps(customer.__dict__)
 
-def create_customer(customer):
-    # Get the id value of the last location in the list
-    max_id = CUSTOMERS[-1]["id"]
+def create_customer(new_customer):
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
 
-    # Add 1 to whatever that number is
-    new_id = max_id + 1
+        db_cursor.execute("""
+        INSERT INTO Customer
+            ( name, address, email, password )
+        VALUES
+            ( ?, ?, ?, ?);
+        """, (new_customer['name'], new_customer['address'],
+              new_customer['email'], new_customer['password'] ))
 
-    # Add an `id` property to the location dictionary
-    customer["id"] = new_id
+        id = db_cursor.lastrowid
 
-    # Add the location dictionary to the list
-    CUSTOMERS.append(customer)
+        new_customer['id'] = id
 
-    # Return the dictionary with `id` property added
-    return customer
+    return json.dumps(new_customer)
 
 def delete_customer(id):
     with sqlite3.connect("./kennel.db") as conn:
